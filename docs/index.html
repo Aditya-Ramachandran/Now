@@ -1,42 +1,248 @@
-<!doctype html>
+ï»¿<!doctype html>
 <html lang="en">
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <meta name="theme-color" content="#101114" />
+    <meta name="theme-color" content="#0b0d14" />
     <meta name="description" content="A live personal status page." />
-    <title>Now — Personal status</title>
+    <title>Now - Personal status</title>
     <style>
-      :root { color-scheme: dark; font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif; background: #101114; color: #f5f7fb; }
+      :root {
+        color-scheme: dark;
+        font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+        background: #0b0d14;
+        color: #f6f7fb;
+      }
+
       * { box-sizing: border-box; }
-      body { min-height: 100vh; margin: 0; display: grid; place-items: center; padding: 24px; background: radial-gradient(circle at 15% 10%, rgba(83, 103, 255, .14), transparent 35rem), radial-gradient(circle at 90% 90%, rgba(169, 96, 255, .11), transparent 32rem), #101114; }
-      main { width: min(100%, 640px); }
-      .brand { display: flex; align-items: center; gap: 10px; margin: 0 0 16px 4px; color: #aeb5c6; font-size: .94rem; font-weight: 700; letter-spacing: .04em; text-transform: uppercase; }
-      .brand-mark { width: 10px; height: 10px; border-radius: 50%; background: #7c89ff; box-shadow: 0 0 18px #7c89ff; }
-      .card { overflow: hidden; border: 1px solid #282c35; border-radius: 20px; background: rgba(24, 26, 32, .9); box-shadow: 0 24px 70px rgba(0, 0, 0, .3); }
-      .state { display: grid; min-height: 304px; padding: clamp(32px, 8vw, 60px); align-content: center; gap: 14px; }
-      .eyebrow { margin: 0; color: #aeb5c6; font-size: 1rem; }
-      h1 { margin: 0; font-size: clamp(3rem, 12vw, 5.4rem); line-height: .96; letter-spacing: -.065em; }
-      .description { margin: 4px 0 0; color: #c4cad6; font-size: 1.05rem; }
-      .meta { display: flex; align-items: center; gap: 9px; margin-top: 20px; color: #9ea6b8; font-size: .9rem; }
-      .dot { width: 8px; height: 8px; border-radius: 50%; background: currentColor; box-shadow: 0 0 12px currentColor; }
-      .status-gym { color: #54d98d; } .status-work { color: #70a7ff; } .status-study { color: #c28dff; } .status-sleep { color: #a7afbe; } .status-stale, .status-error, .status-unset { color: #f1be63; }
-      footer { border-top: 1px solid #282c35; padding: 18px clamp(24px, 6vw, 40px); color: #81899a; font-size: .85rem; } footer strong { color: #c4cad6; font-weight: 600; }
+
+      body {
+        min-height: 100vh;
+        margin: 0;
+        padding: clamp(22px, 5vw, 72px) 24px;
+        display: grid;
+        place-items: center;
+        overflow-x: hidden;
+        background:
+          radial-gradient(circle at 14% 12%, rgba(101, 115, 255, .16), transparent 31rem),
+          radial-gradient(circle at 86% 92%, rgba(190, 105, 255, .12), transparent 28rem),
+          linear-gradient(145deg, #111528 0%, #0b0d14 52%, #11101e 100%);
+      }
+
+      main { width: min(100%, 760px); }
+
+      .masthead {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        margin: 0 4px 18px;
+      }
+
+      .brand {
+        display: inline-flex;
+        align-items: center;
+        gap: 10px;
+        color: #f6f7fb;
+        font-size: .9rem;
+        font-weight: 800;
+        letter-spacing: .15em;
+      }
+
+      .brand-mark {
+        width: 11px;
+        height: 11px;
+        border-radius: 50%;
+        background: #8995ff;
+        box-shadow: 0 0 0 6px rgba(137, 149, 255, .12), 0 0 22px #8995ff;
+      }
+
+      .masthead-note {
+        color: #7f899e;
+        font-size: .78rem;
+        letter-spacing: .07em;
+        text-transform: uppercase;
+      }
+
+      .card {
+        --accent: #f1bd5d;
+        --accent-rgb: 241, 189, 93;
+        position: relative;
+        overflow: hidden;
+        border: 1px solid rgba(190, 200, 230, .13);
+        border-radius: 28px;
+        background: rgba(20, 23, 34, .76);
+        box-shadow: 0 34px 90px rgba(0, 0, 0, .42), inset 0 1px 0 rgba(255, 255, 255, .035);
+        backdrop-filter: blur(18px);
+      }
+
+      .card::before {
+        content: "";
+        position: absolute;
+        width: 360px;
+        height: 360px;
+        top: -220px;
+        right: -100px;
+        border-radius: 50%;
+        background: radial-gradient(circle, rgba(var(--accent-rgb), .22), transparent 67%);
+        pointer-events: none;
+      }
+
+      .card[data-status="gym"] { --accent: #76e6a3; --accent-rgb: 118, 230, 163; }
+      .card[data-status="work"] { --accent: #78a9ff; --accent-rgb: 120, 169, 255; }
+      .card[data-status="study"] { --accent: #c598ff; --accent-rgb: 197, 152, 255; }
+      .card[data-status="sleep"] { --accent: #a8b1c3; --accent-rgb: 168, 177, 195; }
+      .card[data-status="stale"], .card[data-status="unset"], .card[data-status="error"] { --accent: #f1bd5d; --accent-rgb: 241, 189, 93; }
+
+      .card-top {
+        position: relative;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        padding: 24px clamp(26px, 6vw, 42px) 0;
+      }
+
+      .eyebrow {
+        margin: 0;
+        color: #aeb7c9;
+        font-size: .82rem;
+        font-weight: 700;
+        letter-spacing: .1em;
+        text-transform: uppercase;
+      }
+
+      .signal {
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+        color: #aeb7c9;
+        font-size: .78rem;
+      }
+
+      .signal-dot {
+        width: 7px;
+        height: 7px;
+        border-radius: 50%;
+        background: var(--accent);
+        box-shadow: 0 0 14px var(--accent);
+      }
+
+      .state {
+        position: relative;
+        display: grid;
+        grid-template-columns: auto 1fr;
+        gap: clamp(22px, 5vw, 36px);
+        align-items: center;
+        min-height: 338px;
+        padding: clamp(36px, 8vw, 64px) clamp(26px, 6vw, 42px);
+      }
+
+      .status-glyph {
+        width: clamp(74px, 14vw, 104px);
+        aspect-ratio: 1;
+        display: grid;
+        place-items: center;
+        border: 1px solid rgba(var(--accent-rgb), .34);
+        border-radius: 24px;
+        color: var(--accent);
+        background: rgba(var(--accent-rgb), .1);
+        box-shadow: inset 0 1px 0 rgba(255, 255, 255, .07), 0 18px 34px rgba(0, 0, 0, .2);
+        font-size: clamp(2.2rem, 7vw, 3.3rem);
+        font-weight: 800;
+        letter-spacing: -.08em;
+      }
+
+      h1 {
+        margin: 0;
+        color: var(--accent);
+        font-size: clamp(3.4rem, 11vw, 6.6rem);
+        line-height: .88;
+        letter-spacing: -.075em;
+      }
+
+      .description {
+        max-width: 390px;
+        margin: 16px 0 0;
+        color: #c4ccda;
+        font-size: clamp(.98rem, 2.4vw, 1.08rem);
+        line-height: 1.55;
+      }
+
+      .meta {
+        display: inline-flex;
+        align-items: center;
+        gap: 9px;
+        width: fit-content;
+        margin-top: 22px;
+        padding: 9px 12px;
+        border: 1px solid rgba(var(--accent-rgb), .2);
+        border-radius: 999px;
+        color: var(--accent);
+        background: rgba(var(--accent-rgb), .08);
+        font-size: .82rem;
+        font-weight: 650;
+      }
+
+      .meta-dot {
+        width: 6px;
+        height: 6px;
+        flex: 0 0 auto;
+        border-radius: 50%;
+        background: currentColor;
+        box-shadow: 0 0 10px currentColor;
+      }
+
+      .footer {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 18px;
+        border-top: 1px solid rgba(190, 200, 230, .11);
+        padding: 18px clamp(26px, 6vw, 42px) 20px;
+        color: #7f899e;
+        font-size: .8rem;
+      }
+
+      .footer strong { color: #cdd4e1; font-weight: 700; }
+      .footer-status { display: inline-flex; align-items: center; gap: 8px; }
+      .footer-line { width: 28px; height: 1px; background: #4a5263; }
+
+      @media (max-width: 520px) {
+        .masthead-note { display: none; }
+        .state { grid-template-columns: 1fr; gap: 24px; }
+        .status-glyph { border-radius: 20px; }
+        .footer { align-items: flex-start; flex-direction: column; }
+      }
     </style>
   </head>
   <body>
     <main>
-      <div class="brand"><span class="brand-mark"></span> Now</div>
-      <section class="card" aria-live="polite">
-        <div class="state">
-          <p class="eyebrow" id="eyebrow">Checking in</p>
-          <h1 id="status" class="status-unset">Loading</h1>
-          <p class="description" id="description">Getting the latest update.</p>
-          <div class="meta status-unset" id="meta"><span class="dot"></span><span>Connecting to status service</span></div>
+      <header class="masthead">
+        <div class="brand"><span class="brand-mark"></span> NOW</div>
+        <span class="masthead-note">A personal presence signal</span>
+      </header>
+
+      <section class="card" id="status-card" data-status="unset" aria-live="polite">
+        <div class="card-top">
+          <p class="eyebrow" id="eyebrow">Checking status</p>
+          <div class="signal"><span class="signal-dot"></span><span id="signal-label">Live</span></div>
         </div>
-        <footer><strong>Live status</strong> · updates every 30 seconds</footer>
+
+        <div class="state">
+          <div class="status-glyph" id="status-glyph" aria-hidden="true">N</div>
+          <div>
+            <h1 id="status">Loading</h1>
+            <p class="description" id="description">Getting the latest update.</p>
+            <div class="meta" id="meta"><span class="meta-dot"></span><span>Connecting to status service</span></div>
+          </div>
+        </div>
+
+        <footer class="footer">
+          <span><strong>NOW</strong> is updated from my watch.</span>
+          <span class="footer-status"><span class="footer-line"></span> refreshes every 30s</span>
+        </footer>
       </section>
     </main>
+
     <script>
       const STATUS_URL = "https://personal-status-worker.healthz.workers.dev/status";
       const REFRESH_INTERVAL_MS = 30_000;
@@ -44,22 +250,62 @@
       const statusElement = document.querySelector("#status");
       const eyebrowElement = document.querySelector("#eyebrow");
       const descriptionElement = document.querySelector("#description");
-      const metaElement = document.querySelector("#meta");
-      const statusLabels = { gym: "Gym", work: "Work", study: "Study", sleep: "Sleep" };
-      function setState({ eyebrow, status, description, meta, stateClass }) { eyebrowElement.textContent = eyebrow; statusElement.textContent = status; descriptionElement.textContent = description; metaElement.lastElementChild.textContent = meta; statusElement.className = stateClass; metaElement.className = `meta ${stateClass}`; }
-      function timeAgo(timestamp) { const minutes = Math.max(0, Math.floor((Date.now() - new Date(timestamp).getTime()) / 60_000)); if (minutes < 1) return "updated just now"; if (minutes === 1) return "updated 1 minute ago"; return `updated ${minutes} minutes ago`; }
+      const metaElement = document.querySelector("#meta span:last-child");
+      const signalLabelElement = document.querySelector("#signal-label");
+      const glyphElement = document.querySelector("#status-glyph");
+      const cardElement = document.querySelector("#status-card");
+      const statusInfo = {
+        gym: { label: "Gym", glyph: "G" },
+        work: { label: "Work", glyph: "W" },
+        study: { label: "Study", glyph: "S" },
+        sleep: { label: "Sleep", glyph: "Z" },
+      };
+
+      function setState({ eyebrow, status, description, meta, theme, glyph, signalLabel = "Live" }) {
+        eyebrowElement.textContent = eyebrow;
+        statusElement.textContent = status;
+        descriptionElement.textContent = description;
+        metaElement.textContent = meta;
+        glyphElement.textContent = glyph;
+        signalLabelElement.textContent = signalLabel;
+        cardElement.dataset.status = theme;
+      }
+
+      function timeAgo(timestamp) {
+        const minutes = Math.max(0, Math.floor((Date.now() - new Date(timestamp).getTime()) / 60_000));
+        if (minutes < 1) return "Updated just now";
+        if (minutes === 1) return "Updated 1 minute ago";
+        return `Updated ${minutes} minutes ago`;
+      }
+
       async function refreshStatus() {
         try {
           const response = await fetch(STATUS_URL, { cache: "no-store" });
-          if (response.status === 404) { setState({ eyebrow: "Currently", status: "Not set", description: "No status has been shared yet.", meta: "Waiting for the first update", stateClass: "status-unset" }); return; }
+          if (response.status === 404) {
+            setState({ eyebrow: "Currently", status: "Not set", description: "No status has been shared yet.", meta: "Waiting for the first update", theme: "unset", glyph: "?", signalLabel: "Waiting" });
+            return;
+          }
           if (!response.ok) throw new Error(`Status request failed: ${response.status}`);
+
           const { status, timestamp } = await response.json();
           const age = Date.now() - new Date(timestamp).getTime();
           const isStale = !Number.isFinite(age) || age > STALE_AFTER_MS;
-          const label = statusLabels[status] || "Unknown";
-          setState({ eyebrow: isStale ? "Last known status" : "Currently", status: label, description: isStale ? "This update may no longer be current." : "Shared directly from my watch.", meta: `${timeAgo(timestamp)}${isStale ? " · status may be stale" : ""}`, stateClass: isStale ? "status-stale" : `status-${status}` });
-        } catch { setState({ eyebrow: "Status service", status: "Unavailable", description: "The latest status could not be reached.", meta: "Trying again in 30 seconds", stateClass: "status-error" }); }
+          const info = statusInfo[status] || { label: "Unknown", glyph: "?" };
+
+          setState({
+            eyebrow: isStale ? "Last known status" : "Currently",
+            status: info.label,
+            description: isStale ? "This update may no longer be current." : "Shared directly from my watch.",
+            meta: isStale ? `${timeAgo(timestamp)} - may be stale` : timeAgo(timestamp),
+            theme: isStale ? "stale" : status,
+            glyph: info.glyph,
+            signalLabel: isStale ? "Stale" : "Live",
+          });
+        } catch {
+          setState({ eyebrow: "Status service", status: "Unavailable", description: "The latest status could not be reached.", meta: "Trying again in 30 seconds", theme: "error", glyph: "!", signalLabel: "Offline" });
+        }
       }
+
       refreshStatus();
       window.setInterval(refreshStatus, REFRESH_INTERVAL_MS);
     </script>
