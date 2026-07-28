@@ -3,15 +3,26 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <meta name="theme-color" content="#f4f2ed" />
-    <meta name="description" content="A live personal status page." />
-    <title>Now - Personal status</title>
+    <meta name="theme-color" content="#dce7e8" />
+    <meta name="description" content="A watch-fed personal activity status page." />
+    <title>Now - Activity telemetry</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&family=Manrope:wght@400;500;600;700&family=Space+Grotesk:wght@500;600;700&display=swap" rel="stylesheet" />
     <style>
       :root {
         color-scheme: light;
-        font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
-        background: #f4f2ed;
-        color: #1b1c1a;
+        --fog: #dce7e8;
+        --ink: #18333a;
+        --muted: #60777c;
+        --line: #b5c8ca;
+        --panel: #f3f8f7;
+        --green: #17826a;
+        --blue: #4f8496;
+        --orange: #c86a2a;
+        font-family: Manrope, Arial, sans-serif;
+        background: var(--fog);
+        color: var(--ink);
       }
 
       * { box-sizing: border-box; }
@@ -19,156 +30,135 @@
       body {
         min-height: 100vh;
         margin: 0;
-        padding: clamp(28px, 7vw, 96px) 22px;
+        padding: clamp(28px, 7vw, 88px) 22px;
         display: grid;
         place-items: center;
         background:
-          linear-gradient(rgba(62, 58, 48, .035) 1px, transparent 1px),
-          linear-gradient(90deg, rgba(62, 58, 48, .035) 1px, transparent 1px),
-          #f4f2ed;
-        background-size: 34px 34px;
+          linear-gradient(90deg, rgba(24, 51, 58, .045) 1px, transparent 1px),
+          linear-gradient(rgba(24, 51, 58, .045) 1px, transparent 1px),
+          var(--fog);
+        background-size: 32px 32px;
       }
 
-      main { width: min(100%, 620px); }
+      main { width: min(100%, 680px); }
 
       .masthead {
         display: flex;
         align-items: center;
         justify-content: space-between;
-        margin: 0 2px 16px;
-      }
-
-      .brand {
-        display: inline-flex;
-        align-items: center;
-        gap: 8px;
-        color: #1b1c1a;
-        font-size: .82rem;
-        font-weight: 800;
-        letter-spacing: .13em;
-      }
-
-      .brand-mark {
-        width: 9px;
-        height: 9px;
-        border-radius: 50%;
-        background: #1b1c1a;
-      }
-
-      .masthead-note {
-        color: #858177;
-        font-size: .77rem;
-      }
-
-      .card {
-        --accent: #c27c25;
-        --accent-soft: #f7ead7;
-        overflow: hidden;
-        border: 1px solid #e0dcd2;
-        border-radius: 18px;
-        background: rgba(255, 254, 251, .92);
-        box-shadow: 0 18px 44px rgba(49, 43, 29, .09), 0 2px 5px rgba(49, 43, 29, .04);
-      }
-
-      .card[data-status="gym"] { --accent: #278158; --accent-soft: #e1f0e8; }
-      .card[data-status="work"] { --accent: #3269b2; --accent-soft: #e5edf9; }
-      .card[data-status="study"] { --accent: #7b50a6; --accent-soft: #eee7f6; }
-      .card[data-status="sleep"] { --accent: #5f6876; --accent-soft: #e9ebef; }
-      .card[data-status="stale"], .card[data-status="unset"], .card[data-status="error"] { --accent: #c27c25; --accent-soft: #f7ead7; }
-
-      .card-header {
-        display: flex;
-        align-items: center;
-        justify-content: space-between;
-        border-bottom: 1px solid #eeeae2;
-        padding: 18px 22px;
-      }
-
-      .eyebrow {
-        margin: 0;
-        color: #77736a;
+        gap: 18px;
+        margin-bottom: 16px;
+        font-family: "IBM Plex Mono", monospace;
         font-size: .72rem;
-        font-weight: 750;
-        letter-spacing: .1em;
+        letter-spacing: .08em;
         text-transform: uppercase;
       }
 
-      .signal {
-        display: inline-flex;
-        align-items: center;
-        gap: 7px;
-        color: #77736a;
-        font-size: .78rem;
+      .brand { display: inline-flex; align-items: center; gap: 9px; font-weight: 500; }
+      .brand-mark { width: 9px; height: 9px; border-radius: 50%; background: var(--ink); }
+      .masthead-note { color: var(--muted); text-align: right; }
+
+      .console {
+        --accent: var(--orange);
+        --accent-soft: #f6e4d7;
+        overflow: hidden;
+        border: 1px solid var(--line);
+        border-radius: 14px;
+        background: var(--panel);
+        box-shadow: 8px 9px 0 rgba(24, 51, 58, .1);
       }
 
-      .signal-dot {
-        width: 7px;
-        height: 7px;
-        border-radius: 50%;
-        background: var(--accent);
+      .console[data-status="gym"] { --accent: var(--green); --accent-soft: #d9eee8; }
+      .console[data-status="work"] { --accent: var(--blue); --accent-soft: #dbeaf0; }
+      .console[data-status="study"] { --accent: #626c9c; --accent-soft: #e4e6f1; }
+      .console[data-status="sleep"] { --accent: #60777c; --accent-soft: #e1ebea; }
+      .console[data-status="stale"], .console[data-status="unset"], .console[data-status="error"] { --accent: var(--orange); --accent-soft: #f6e4d7; }
+
+      .console-top {
+        display: flex;
+        justify-content: space-between;
+        gap: 16px;
+        padding: 17px 20px;
+        border-bottom: 1px solid var(--line);
+        font-family: "IBM Plex Mono", monospace;
+        font-size: .72rem;
+        letter-spacing: .06em;
+        text-transform: uppercase;
       }
 
-      .state {
-        display: grid;
-        grid-template-columns: auto 1fr;
-        gap: 18px;
-        align-items: start;
-        padding: clamp(30px, 7vw, 46px) 22px 28px;
-      }
+      .section-label { color: var(--muted); }
+      .signal { display: inline-flex; align-items: center; gap: 8px; color: var(--accent); }
+      .signal-dot { width: 8px; height: 8px; border-radius: 50%; background: currentColor; }
+      .signal-dot.fresh { animation: pulse 2.4s ease-out infinite; }
 
-      .status-mark {
-        width: 48px;
-        height: 48px;
+      .readout { padding: clamp(32px, 7vw, 52px) clamp(20px, 6vw, 42px) 30px; }
+      .kicker { margin: 0 0 12px; color: var(--muted); font-family: "IBM Plex Mono", monospace; font-size: .72rem; letter-spacing: .1em; text-transform: uppercase; }
+
+      .state-line { display: flex; align-items: center; gap: 14px; }
+      .state-mark {
+        width: 38px;
+        height: 38px;
         display: grid;
         place-items: center;
-        border-radius: 14px;
+        flex: 0 0 auto;
+        border: 1px solid var(--accent);
+        border-radius: 50%;
         color: var(--accent);
         background: var(--accent-soft);
-        font-size: 1.1rem;
-        font-weight: 800;
+        font-family: "IBM Plex Mono", monospace;
+        font-size: .84rem;
+        font-weight: 500;
       }
 
       h1 {
-        margin: -3px 0 0;
-        color: #20211f;
-        font-size: clamp(2.75rem, 8vw, 4.2rem);
-        line-height: .94;
-        letter-spacing: -.065em;
+        margin: 0;
+        color: var(--ink);
+        font-family: "Space Grotesk", Arial, sans-serif;
+        font-size: clamp(2.7rem, 8vw, 4.45rem);
+        font-weight: 600;
+        line-height: .9;
+        letter-spacing: -.07em;
       }
 
-      .description {
-        margin: 12px 0 0;
-        color: #69665e;
-        font-size: 1rem;
-        line-height: 1.5;
+      .description { max-width: 470px; margin: 14px 0 0; color: var(--muted); font-size: .97rem; line-height: 1.6; }
+
+      .telemetry {
+        display: grid;
+        grid-template-columns: repeat(3, 1fr);
+        margin-top: 32px;
+        border: 1px solid var(--line);
+        background: #eaf2f1;
       }
 
-      .updated {
-        display: flex;
-        align-items: baseline;
-        justify-content: space-between;
-        gap: 18px;
-        margin: 28px 22px 22px;
-        padding-top: 16px;
-        border-top: 1px solid #eeeae2;
-        color: #89857c;
-        font-size: .78rem;
-      }
+      .metric { min-width: 0; padding: 14px 15px; }
+      .metric + .metric { border-left: 1px solid var(--line); }
+      .metric-label { display: block; color: var(--muted); font-family: "IBM Plex Mono", monospace; font-size: .64rem; letter-spacing: .07em; text-transform: uppercase; }
+      .metric-value { display: block; margin-top: 7px; overflow: hidden; color: var(--ink); font-family: "IBM Plex Mono", monospace; font-size: .78rem; font-weight: 500; text-overflow: ellipsis; white-space: nowrap; }
+      .metric-value.accent { color: var(--accent); }
 
-      .updated strong { color: var(--accent); font-size: .82rem; font-weight: 750; text-align: right; }
+      .rail-wrap { padding: 23px clamp(20px, 6vw, 42px) 27px; border-top: 1px solid var(--line); }
+      .rail-title { margin: 0 0 16px; color: var(--muted); font-family: "IBM Plex Mono", monospace; font-size: .66rem; letter-spacing: .08em; text-transform: uppercase; }
+      .activity-rail { display: grid; grid-template-columns: repeat(4, 1fr); gap: 8px; margin: 0; padding: 0; list-style: none; }
+      .activity { position: relative; padding-top: 17px; color: #789096; font-family: "IBM Plex Mono", monospace; font-size: .7rem; text-transform: uppercase; }
+      .activity::before { content: ""; position: absolute; top: 4px; left: 0; right: -8px; height: 1px; background: #b5c8ca; }
+      .activity:first-child::before { left: 0; }
+      .activity:last-child::before { right: 50%; }
+      .activity-dot { position: absolute; top: 0; left: 0; width: 9px; height: 9px; border: 1px solid #789096; border-radius: 50%; background: var(--panel); }
+      .activity.active { color: var(--ink); font-weight: 500; }
+      .activity.active .activity-dot { border-color: var(--accent); background: var(--accent); box-shadow: 0 0 0 4px var(--accent-soft); }
 
-      .note {
-        margin: 16px 2px 0;
-        color: #89857c;
-        font-size: .78rem;
-        line-height: 1.5;
-      }
+      .footer { margin: 16px 2px 0; color: var(--muted); font-size: .76rem; line-height: 1.55; }
+      .footer strong { color: var(--ink); }
 
-      @media (max-width: 440px) {
+      @keyframes pulse { 0%, 75%, 100% { box-shadow: 0 0 0 0 rgba(23, 130, 106, 0); } 35% { box-shadow: 0 0 0 7px rgba(23, 130, 106, .18); } }
+      @media (prefers-reduced-motion: reduce) { .signal-dot.fresh { animation: none; } }
+
+      @media (max-width: 520px) {
         .masthead-note { display: none; }
-        .card-header { padding: 16px 18px; }
-        .state { padding: 30px 18px 24px; }
-        .updated { margin: 24px 18px 18px; }
+        .telemetry { grid-template-columns: 1fr; }
+        .metric + .metric { border-top: 1px solid var(--line); border-left: 0; }
+        .metric { display: flex; align-items: center; justify-content: space-between; gap: 20px; }
+        .metric-value { margin-top: 0; }
       }
     </style>
   </head>
@@ -176,30 +166,42 @@
     <main>
       <header class="masthead">
         <div class="brand"><span class="brand-mark"></span> NOW</div>
-        <span class="masthead-note">A small personal status page</span>
+        <span class="masthead-note">Watch-fed activity telemetry</span>
       </header>
 
-      <section class="card" id="status-card" data-status="unset" aria-live="polite">
-        <div class="card-header">
-          <p class="eyebrow" id="eyebrow">Checking status</p>
-          <div class="signal"><span class="signal-dot"></span><span id="signal-label">Live</span></div>
+      <section class="console" id="console" data-status="unset" aria-live="polite">
+        <div class="console-top">
+          <span class="section-label">Operating state</span>
+          <span class="signal"><span class="signal-dot" id="signal-dot"></span><span id="signal-label">Connecting</span></span>
         </div>
 
-        <div class="state">
-          <div class="status-mark" id="status-mark" aria-hidden="true">N</div>
-          <div>
+        <div class="readout">
+          <p class="kicker" id="eyebrow">Current activity</p>
+          <div class="state-line">
+            <div class="state-mark" id="status-mark" aria-hidden="true">N</div>
             <h1 id="status">Loading</h1>
-            <p class="description" id="description">Getting the latest update.</p>
+          </div>
+          <p class="description" id="description">Reading the latest event from the status stream.</p>
+
+          <div class="telemetry">
+            <div class="metric"><span class="metric-label">Last signal</span><span class="metric-value" id="last-signal">-</span></div>
+            <div class="metric"><span class="metric-label">Freshness</span><span class="metric-value accent" id="freshness">Checking</span></div>
+            <div class="metric"><span class="metric-label">Poll interval</span><span class="metric-value">30 seconds</span></div>
           </div>
         </div>
 
-        <div class="updated">
-          <span>Last updated</span>
-          <strong id="meta">Connecting to status service</strong>
+        <div class="rail-wrap">
+          <p class="rail-title">Watch activity states</p>
+          <ol class="activity-rail">
+            <li class="activity" data-activity="gym"><span class="activity-dot"></span>Gym</li>
+            <li class="activity" data-activity="work"><span class="activity-dot"></span>Work</li>
+            <li class="activity" data-activity="study"><span class="activity-dot"></span>Study</li>
+            <li class="activity" data-activity="sleep"><span class="activity-dot"></span>Sleep</li>
+          </ol>
         </div>
       </section>
 
-      <p class="note">Set directly from my watch. The page checks for a new update every 30 seconds.</p>
+      <p class="footer"><strong>Now</strong> serves one current activity, written by a watch action and read as a live status signal.</p>
     </main>
 
     <script>
@@ -209,25 +211,22 @@
       const statusElement = document.querySelector("#status");
       const eyebrowElement = document.querySelector("#eyebrow");
       const descriptionElement = document.querySelector("#description");
-      const metaElement = document.querySelector("#meta");
       const signalLabelElement = document.querySelector("#signal-label");
-      const markElement = document.querySelector("#status-mark");
-      const cardElement = document.querySelector("#status-card");
+      const signalDotElement = document.querySelector("#signal-dot");
+      const statusMarkElement = document.querySelector("#status-mark");
+      const lastSignalElement = document.querySelector("#last-signal");
+      const freshnessElement = document.querySelector("#freshness");
+      const consoleElement = document.querySelector("#console");
+      const activityElements = document.querySelectorAll(".activity");
       const statusInfo = {
-        gym: { label: "Gym", mark: "G" },
-        work: { label: "Work", mark: "W" },
-        study: { label: "Study", mark: "S" },
-        sleep: { label: "Sleep", mark: "Z" },
+        gym: { label: "Gym", mark: "GY" },
+        work: { label: "Work", mark: "WK" },
+        study: { label: "Study", mark: "ST" },
+        sleep: { label: "Sleep", mark: "ZZ" },
       };
 
-      function setState({ eyebrow, status, description, meta, theme, mark, signalLabel = "Live" }) {
-        eyebrowElement.textContent = eyebrow;
-        statusElement.textContent = status;
-        descriptionElement.textContent = description;
-        metaElement.textContent = meta;
-        markElement.textContent = mark;
-        signalLabelElement.textContent = signalLabel;
-        cardElement.dataset.status = theme;
+      function formatTimestamp(timestamp) {
+        return new Intl.DateTimeFormat(undefined, { hour: "2-digit", minute: "2-digit", second: "2-digit" }).format(new Date(timestamp));
       }
 
       function timeAgo(timestamp) {
@@ -237,11 +236,25 @@
         return `${minutes} minutes ago`;
       }
 
+      function setState({ status, eyebrow, description, lastSignal, freshness, theme, mark, signalLabel, activeActivity }) {
+        statusElement.textContent = status;
+        eyebrowElement.textContent = eyebrow;
+        descriptionElement.textContent = description;
+        lastSignalElement.textContent = lastSignal;
+        freshnessElement.textContent = freshness;
+        statusMarkElement.textContent = mark;
+        signalLabelElement.textContent = signalLabel;
+        consoleElement.dataset.status = theme;
+        signalDotElement.classList.toggle("fresh", theme !== "stale" && theme !== "unset" && theme !== "error");
+        activityElements.forEach((element) => element.classList.toggle("active", element.dataset.activity === activeActivity));
+        document.title = `Now - ${status}`;
+      }
+
       async function refreshStatus() {
         try {
           const response = await fetch(STATUS_URL, { cache: "no-store" });
           if (response.status === 404) {
-            setState({ eyebrow: "Currently", status: "Not set", description: "No status has been shared yet.", meta: "Waiting for the first update", theme: "unset", mark: "?", signalLabel: "Waiting" });
+            setState({ status: "Not set", eyebrow: "Current activity", description: "No watch state has been recorded yet.", lastSignal: "-", freshness: "Waiting", theme: "unset", mark: "?", signalLabel: "Waiting", activeActivity: null });
             return;
           }
           if (!response.ok) throw new Error(`Status request failed: ${response.status}`);
@@ -252,16 +265,18 @@
           const info = statusInfo[status] || { label: "Unknown", mark: "?" };
 
           setState({
-            eyebrow: isStale ? "Last known status" : "Currently",
             status: info.label,
-            description: isStale ? "This update may no longer be current." : "Shared directly from my watch.",
-            meta: isStale ? `${timeAgo(timestamp)} - may be stale` : timeAgo(timestamp),
+            eyebrow: isStale ? "Last known activity" : "Current activity",
+            description: isStale ? "No recent watch signal. This state may no longer be current." : "A fresh state was received from the activity status stream.",
+            lastSignal: formatTimestamp(timestamp),
+            freshness: isStale ? `${timeAgo(timestamp)} / stale` : timeAgo(timestamp),
             theme: isStale ? "stale" : status,
             mark: info.mark,
-            signalLabel: isStale ? "Stale" : "Live",
+            signalLabel: isStale ? "Stale" : "Fresh",
+            activeActivity: status,
           });
         } catch {
-          setState({ eyebrow: "Status service", status: "Unavailable", description: "The latest status could not be reached.", meta: "Trying again in 30 seconds", theme: "error", mark: "!", signalLabel: "Offline" });
+          setState({ status: "Unavailable", eyebrow: "Status service", description: "The live status stream could not be reached. Retrying automatically.", lastSignal: "-", freshness: "Offline", theme: "error", mark: "!", signalLabel: "Offline", activeActivity: null });
         }
       }
 
