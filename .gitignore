@@ -1,0 +1,6 @@
+# Cloudflare Worker local secrets and build output
+status-worker/.dev.vars
+status-worker/.wrangler/
+
+# Future Wear OS local build configuration
+watch-app/local.properties
