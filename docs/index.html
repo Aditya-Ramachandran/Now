@@ -8,210 +8,71 @@
     <title>Now - Current activity</title>
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-    <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&family=Sora:wght@500;600;700&display=swap" rel="stylesheet" />
+    <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+Condensed:wght@400;500;600&family=Sora:wght@500;600;700&display=swap" rel="stylesheet" />
     <style>
-      :root {
-        --face: #e7eff0;
-        --ink: #1f2a2d;
-        --muted: #667579;
-        --line: #bdcbcd;
-        --panel: #f8fbfb;
-        --green: #2b6a52;
-        --brass: #b28135;
-        --study: #5274a8;
-        --sleep: #6d6684;
-        font-family: Sora, sans-serif;
-        background: var(--face);
-        color: var(--ink);
-      }
-
-      * { box-sizing: border-box; }
-
-      body {
-        min-height: 100vh;
-        margin: 0;
-        padding: clamp(28px, 7vw, 88px) 22px;
-        display: grid;
-        place-items: center;
-        background:
-          radial-gradient(circle at 50% 15%, rgba(255, 255, 255, .76), transparent 28rem),
-          var(--face);
-      }
-
-      main { width: min(100%, 680px); }
-
-      .masthead {
-        display: flex;
-        align-items: center;
-        justify-content: space-between;
-        gap: 20px;
-        margin-bottom: 24px;
-      }
-
-      .brand {
-        display: inline-flex;
-        align-items: center;
-        gap: 9px;
-        font-family: "IBM Plex Mono", monospace;
-        font-size: .76rem;
-        font-weight: 500;
-        letter-spacing: .13em;
-      }
-
-      .brand-mark { width: 10px; height: 10px; border-radius: 50%; background: var(--ink); }
-      .masthead-note { color: var(--muted); font-family: "IBM Plex Mono", monospace; font-size: .7rem; text-align: right; }
-
-      .instrument {
-        --accent: var(--brass);
-        --soft-accent: #f1e7d3;
-        --angle: 180deg;
-        padding: clamp(26px, 6vw, 42px);
-        border-radius: 24px;
-        background: rgba(248, 251, 251, .9);
-        box-shadow: 0 20px 50px rgba(31, 42, 45, .13), inset 0 1px 0 rgba(255, 255, 255, .8);
-      }
-
-      .instrument[data-status="gym"] { --accent: var(--green); --soft-accent: #dfeee8; --angle: -90deg; }
-      .instrument[data-status="work"] { --accent: var(--brass); --soft-accent: #f1e7d3; --angle: 0deg; }
-      .instrument[data-status="study"] { --accent: var(--study); --soft-accent: #dfe8f4; --angle: 90deg; }
-      .instrument[data-status="sleep"] { --accent: var(--sleep); --soft-accent: #e8e4ed; --angle: 180deg; }
-      .instrument[data-status="stale"], .instrument[data-status="unset"], .instrument[data-status="error"] { --accent: var(--brass); --soft-accent: #f1e7d3; }
-
-      .status-bar { display: flex; align-items: center; justify-content: space-between; gap: 16px; color: var(--muted); font-family: "IBM Plex Mono", monospace; font-size: .7rem; letter-spacing: .06em; text-transform: uppercase; }
-      .freshness { display: inline-flex; align-items: center; gap: 7px; color: var(--accent); }
-      .freshness-dot { width: 8px; height: 8px; border-radius: 50%; background: currentColor; }
-
-      .bezel-wrap { display: grid; place-items: center; padding: clamp(34px, 8vw, 58px) 0 34px; }
-      .bezel {
-        position: relative;
-        width: min(78vw, 350px);
-        aspect-ratio: 1;
-        border: 1px solid #aebfc1;
-        border-radius: 50%;
-        background: conic-gradient(from 45deg, #eef4f4 0 25%, #e8f0f0 0 50%, #eef4f4 0 75%, #e8f0f0 0 100%);
-        box-shadow: inset 0 0 0 13px #d6e1e2, inset 0 0 0 14px #aebfc1, 0 15px 28px rgba(31, 42, 45, .12);
-      }
-
-      .selector {
-        position: absolute;
-        inset: -6px;
-        border: 10px solid transparent;
-        border-top-color: var(--accent);
-        border-radius: 50%;
-        transform: rotate(var(--angle));
-        transition: transform .4s cubic-bezier(.2, .8, .2, 1), border-color .2s ease;
-      }
-
-      .bezel.state-changed .selector { animation: settle .48s cubic-bezier(.2, .8, .2, 1); }
-
-      .bezel-center {
-        position: absolute;
-        inset: 24%;
-        display: grid;
-        place-items: center;
-        align-content: center;
-        border: 1px solid #b7c6c8;
-        border-radius: 50%;
-        background: var(--panel);
-        box-shadow: 0 5px 14px rgba(31, 42, 45, .09), inset 0 1px 0 #fff;
-        text-align: center;
-      }
-
-      .center-label { margin: 0 0 5px; color: var(--muted); font-family: "IBM Plex Mono", monospace; font-size: .59rem; letter-spacing: .08em; text-transform: uppercase; }
-      h1 { margin: 0; color: var(--ink); font-size: clamp(2rem, 7vw, 3.2rem); font-weight: 600; line-height: 1; letter-spacing: -.065em; }
-
-      .activity {
-        position: absolute;
-        display: inline-flex;
-        align-items: center;
-        gap: 7px;
-        color: var(--muted);
-        font-family: "IBM Plex Mono", monospace;
-        font-size: .72rem;
-        letter-spacing: .04em;
-        text-transform: uppercase;
-      }
-
-      .activity-dot { width: 7px; height: 7px; border: 1px solid currentColor; border-radius: 50%; background: var(--panel); }
-      .activity.active { color: var(--accent); font-weight: 500; }
-      .activity.active .activity-dot { border-color: var(--accent); background: var(--accent); box-shadow: 0 0 0 4px var(--soft-accent); }
-      .activity-work { top: 11%; left: 50%; transform: translateX(-50%); }
-      .activity-study { top: 50%; right: 8%; transform: translateY(-50%); }
-      .activity-sleep { bottom: 11%; left: 50%; transform: translateX(-50%); }
-      .activity-gym { top: 50%; left: 8%; transform: translateY(-50%); }
-
-      .description { max-width: 480px; margin: 0 auto; color: var(--muted); font-size: .92rem; line-height: 1.65; text-align: center; }
-
-      .telemetry { display: flex; justify-content: center; flex-wrap: wrap; gap: 8px 22px; margin: 28px 0 0; padding: 0; list-style: none; color: var(--muted); font-family: "IBM Plex Mono", monospace; font-size: .7rem; }
-      .telemetry li { display: inline-flex; gap: 7px; }
-      .telemetry-key { color: #89989a; }
-      .telemetry-value { color: var(--ink); font-weight: 500; }
-      .telemetry-value.accent { color: var(--accent); }
-
-      .raw-status {
-        display: block;
-        width: fit-content;
-        margin: 28px auto 0;
-        padding: 8px 11px;
-        border-radius: 8px;
-        color: var(--muted);
-        font-family: "IBM Plex Mono", monospace;
-        font-size: .69rem;
-        text-decoration: none;
-      }
-
-      .raw-status:hover { color: var(--ink); background: #edf3f3; }
-      .raw-status:focus-visible { outline: 3px solid var(--accent); outline-offset: 3px; color: var(--ink); }
-
-      .footer { margin: 18px 4px 0; color: var(--muted); font-size: .74rem; line-height: 1.55; text-align: center; }
-      .footer strong { color: var(--ink); }
-
-      @keyframes settle { 0% { transform: rotate(var(--previous-angle, var(--angle))) scale(1); } 55% { transform: rotate(var(--angle)) scale(1.035); } 100% { transform: rotate(var(--angle)) scale(1); } }
-      @media (prefers-reduced-motion: reduce) { .selector { transition: none; } .bezel.state-changed .selector { animation: none; } }
-      @media (max-width: 450px) { .masthead-note { display: none; } .instrument { padding: 24px 18px; } .activity { font-size: .64rem; } .activity-work { top: 7%; } .activity-sleep { bottom: 7%; } .activity-gym { left: 5%; } .activity-study { right: 5%; } .telemetry { justify-content: flex-start; flex-direction: column; gap: 8px; padding: 0 8px; } }
+      :root { --face:#e7eff0; --ink:#202b2e; --muted:#667579; --line:#bdcbcd; --panel:#f8fbfb; --gym:#38755d; --work:#9a6f2e; --study:#4d6f9e; --sleep:#687083; font-family:Sora,sans-serif; background:var(--face); color:var(--ink); }
+      * { box-sizing:border-box; }
+      body { min-height:100vh; margin:0; padding:clamp(28px,7vw,88px) 22px; display:grid; place-items:center; background:radial-gradient(circle at 50% 15%,rgba(255,255,255,.76),transparent 28rem),var(--face); }
+      main { width:min(100%,680px); }
+      .masthead { display:flex; align-items:center; justify-content:space-between; gap:20px; margin-bottom:24px; }
+      .brand { font-size:.96rem; font-weight:700; letter-spacing:-.03em; }
+      .masthead-note { color:var(--muted); font-family:"IBM Plex Sans Condensed",sans-serif; font-size:.9rem; }
+      .instrument { --accent:var(--work); --soft-accent:#f1e7d3; --angle:0deg; padding:clamp(26px,6vw,42px); border-radius:24px; background:rgba(248,251,251,.9); box-shadow:0 20px 50px rgba(31,42,45,.13),inset 0 1px 0 rgba(255,255,255,.8); }
+      .instrument[data-status="gym"] { --accent:var(--gym); --soft-accent:#dfeee8; --angle:-90deg; }
+      .instrument[data-status="work"] { --accent:var(--work); --soft-accent:#f1e7d3; --angle:0deg; }
+      .instrument[data-status="study"] { --accent:var(--study); --soft-accent:#dfe8f4; --angle:90deg; }
+      .instrument[data-status="sleep"] { --accent:var(--sleep); --soft-accent:#e8e9ee; --angle:180deg; }
+      .instrument[data-status="stale"],.instrument[data-status="unset"],.instrument[data-status="error"] { --accent:var(--work); --soft-accent:#f1e7d3; }
+      .status-bar { display:flex; align-items:center; justify-content:space-between; gap:16px; color:var(--muted); font-family:"IBM Plex Sans Condensed",sans-serif; font-size:.95rem; }
+      .freshness { display:inline-flex; align-items:center; gap:7px; color:var(--accent); font-weight:500; }
+      .freshness-dot { width:7px; height:7px; border-radius:50%; background:currentColor; }
+      .bezel-wrap { display:grid; place-items:center; padding:clamp(34px,8vw,58px) 0 34px; }
+      .bezel { position:relative; width:min(78vw,350px); aspect-ratio:1; border:1px solid #aebfc1; border-radius:50%; background:#edf4f4; box-shadow:inset 0 0 0 13px #d6e1e2,inset 0 0 0 14px #aebfc1,0 15px 28px rgba(31,42,45,.12); }
+      .ticks { position:absolute; inset:13px; border-radius:50%; background:repeating-conic-gradient(from -2deg,#91a5a8 0deg 1deg,transparent 1deg 10deg); -webkit-mask:radial-gradient(transparent 0 72%,#000 72.6% 74%,transparent 74.6%); mask:radial-gradient(transparent 0 72%,#000 72.6% 74%,transparent 74.6%); }
+      .selector { position:absolute; inset:-6px; border:9px solid transparent; border-top-color:var(--accent); border-radius:50%; transform:rotate(var(--angle)); transition:transform .4s cubic-bezier(.2,.8,.2,1),border-color .2s ease; }
+      .bezel.state-changed .selector { animation:settle .48s cubic-bezier(.2,.8,.2,1); }
+      .bezel-center { position:absolute; inset:24%; display:grid; place-items:center; align-content:center; border:1px solid #b7c6c8; border-radius:50%; background:var(--panel); box-shadow:0 5px 14px rgba(31,42,45,.09),inset 0 1px 0 #fff; text-align:center; }
+      .center-label { margin:0 0 5px; color:var(--muted); font-family:"IBM Plex Sans Condensed",sans-serif; font-size:.82rem; }
+      h1 { margin:0; color:var(--ink); font-size:clamp(2rem,7vw,3.2rem); font-weight:600; line-height:1; letter-spacing:-.065em; }
+      .activity { position:absolute; display:inline-flex; align-items:center; gap:6px; color:var(--muted); font-family:"IBM Plex Sans Condensed",sans-serif; font-size:.9rem; line-height:1; }
+      .activity-glyph { width:17px; height:17px; color:currentColor; fill:none; stroke:currentColor; stroke-linecap:round; stroke-linejoin:round; stroke-width:1.8; }
+      .activity.active { color:var(--accent); font-weight:600; }
+      .activity-work { top:10%; left:50%; transform:translateX(-50%); }
+      .activity-study { top:50%; right:7%; transform:translateY(-50%); }
+      .activity-sleep { bottom:10%; left:50%; transform:translateX(-50%); }
+      .activity-gym { top:50%; left:7%; transform:translateY(-50%); }
+      .description { max-width:470px; margin:0 auto; color:var(--muted); font-size:.92rem; line-height:1.65; text-align:center; }
+      .telemetry { display:flex; justify-content:center; flex-wrap:wrap; gap:8px 20px; margin:27px 0 0; padding:0; list-style:none; color:var(--muted); font-family:"IBM Plex Sans Condensed",sans-serif; font-size:.88rem; }
+      .telemetry li { display:inline-flex; gap:6px; } .telemetry-key { color:#89989a; } .telemetry-value { color:var(--ink); font-weight:500; } .telemetry-value.accent { color:var(--accent); }
+      .raw-status { display:block; width:fit-content; margin:27px auto 0; padding:8px 11px; border-radius:8px; color:var(--muted); font-family:"IBM Plex Sans Condensed",sans-serif; font-size:.85rem; text-decoration:none; }
+      .raw-status:hover { color:var(--ink); background:#edf3f3; } .raw-status:focus-visible { outline:3px solid var(--accent); outline-offset:3px; color:var(--ink); }
+      .footer { margin:18px 4px 0; color:var(--muted); font-size:.74rem; line-height:1.55; text-align:center; } .footer strong { color:var(--ink); }
+      @keyframes settle { 0% { transform:rotate(var(--previous-angle,var(--angle))) scale(1); } 55% { transform:rotate(var(--angle)) scale(1.035); } 100% { transform:rotate(var(--angle)) scale(1); } }
+      @media (prefers-reduced-motion:reduce) { .selector { transition:none; } .bezel.state-changed .selector { animation:none; } }
+      @media (max-width:450px) { .masthead-note { display:none; } .instrument { padding:24px 18px; } .activity { font-size:.79rem; } .activity-work { top:6%; } .activity-sleep { bottom:6%; } .activity-gym { left:4%; } .activity-study { right:4%; } .telemetry { justify-content:flex-start; flex-direction:column; gap:7px; padding:0 8px; } }
     </style>
   </head>
   <body>
     <main>
-      <header class="masthead">
-        <div class="brand"><span class="brand-mark"></span> NOW</div>
-        <span class="masthead-note">Galaxy Watch activity signal</span>
-      </header>
-
+      <header class="masthead"><div class="brand">Now</div><span class="masthead-note">Galaxy Watch activity signal</span></header>
       <section class="instrument" id="instrument" data-status="unset" aria-live="polite">
-        <div class="status-bar">
-          <span id="eyebrow">Current activity</span>
-          <span class="freshness"><span class="freshness-dot"></span><span id="freshness-label">Connecting</span></span>
-        </div>
-
+        <div class="status-bar"><span id="eyebrow">Current activity</span><span class="freshness"><span class="freshness-dot"></span><span id="freshness-label">Connecting</span></span></div>
         <div class="bezel-wrap">
-          <div class="bezel" id="bezel" data-status="unset">
-            <div class="selector" aria-hidden="true"></div>
-            <span class="activity activity-work" data-activity="work"><span class="activity-dot"></span>Work</span>
-            <span class="activity activity-study" data-activity="study"><span class="activity-dot"></span>Study</span>
-            <span class="activity activity-sleep" data-activity="sleep"><span class="activity-dot"></span>Sleep</span>
-            <span class="activity activity-gym" data-activity="gym"><span class="activity-dot"></span>Gym</span>
-            <div class="bezel-center">
-              <p class="center-label">Now</p>
-              <h1 id="status">Loading</h1>
-            </div>
+          <div class="bezel" id="bezel">
+            <div class="ticks" aria-hidden="true"></div><div class="selector" aria-hidden="true"></div>
+            <span class="activity activity-work" data-activity="work"><svg class="activity-glyph" viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="7" width="18" height="10" rx="1"/><path d="M6 10h1M10 10h1M14 10h1M18 10h.1M6 14h8M16 14h2"/></svg>Work</span>
+            <span class="activity activity-study" data-activity="study"><svg class="activity-glyph" viewBox="0 0 24 24" aria-hidden="true"><path d="M4 5.5c3.3-.9 5.7-.1 8 2.1 2.3-2.2 4.7-3 8-2.1v13c-3.1-.8-5.5-.1-8 2-2.5-2.1-4.9-2.8-8-2z"/><path d="M12 7.6v12.8"/></svg>Study</span>
+            <span class="activity activity-sleep" data-activity="sleep"><svg class="activity-glyph" viewBox="0 0 24 24" aria-hidden="true"><path d="M19 16.2A7.7 7.7 0 0 1 8 5.3 7.7 7.7 0 1 0 19 16.2z"/><path d="M4 19h16"/></svg>Sleep</span>
+            <span class="activity activity-gym" data-activity="gym"><svg class="activity-glyph" viewBox="0 0 24 24" aria-hidden="true"><path d="M3 9v6M6 7v10M18 7v10M21 9v6M6 12h12"/></svg>Gym</span>
+            <div class="bezel-center"><p class="center-label">Now</p><h1 id="status">Loading</h1></div>
           </div>
         </div>
-
         <p class="description" id="description">Reading the latest status event.</p>
-
-        <ul class="telemetry" aria-label="Status details">
-          <li><span class="telemetry-key">Recorded</span><span class="telemetry-value" id="recorded-at">-</span></li>
-          <li><span class="telemetry-key">Freshness</span><span class="telemetry-value accent" id="freshness">Checking</span></li>
-          <li><span class="telemetry-key">Poll</span><span class="telemetry-value">30 seconds</span></li>
-        </ul>
-
+        <ul class="telemetry" aria-label="Status details"><li><span class="telemetry-key">Recorded</span><span class="telemetry-value" id="recorded-at">-</span></li><li><span class="telemetry-key">Freshness</span><span class="telemetry-value accent" id="freshness">Checking</span></li><li><span class="telemetry-key">Refresh</span><span class="telemetry-value">30 seconds</span></li></ul>
         <a class="raw-status" href="https://personal-status-worker.healthz.workers.dev/status" target="_blank" rel="noreferrer">View raw status JSON</a>
       </section>
-
       <p class="footer"><strong>Now</strong> records one real-world activity at a time, selected from a Galaxy Watch.</p>
     </main>
-
     <script>
       const STATUS_URL = "https://personal-status-worker.healthz.workers.dev/status";
       const REFRESH_INTERVAL_MS = 30_000;
@@ -225,76 +86,27 @@
       const instrumentElement = document.querySelector("#instrument");
       const bezelElement = document.querySelector("#bezel");
       const activityElements = document.querySelectorAll(".activity");
-      const statusInfo = {
-        gym: { label: "Gym" },
-        work: { label: "Work" },
-        study: { label: "Study" },
-        sleep: { label: "Sleep" },
-      };
+      const statusInfo = { gym:{label:"Gym"}, work:{label:"Work"}, study:{label:"Study"}, sleep:{label:"Sleep"} };
       let previousActivity = null;
-
-      function formatTimestamp(timestamp) {
-        return new Intl.DateTimeFormat(undefined, { hour: "2-digit", minute: "2-digit", second: "2-digit" }).format(new Date(timestamp));
+      function formatTimestamp(timestamp) { return new Intl.DateTimeFormat(undefined,{hour:"2-digit",minute:"2-digit",second:"2-digit"}).format(new Date(timestamp)); }
+      function timeAgo(timestamp) { const minutes=Math.max(0,Math.floor((Date.now()-new Date(timestamp).getTime())/60000)); if(minutes<1)return "Just now"; if(minutes===1)return "1 minute ago"; return `${minutes} minutes ago`; }
+      function setState({status,eyebrow,description,recordedAt,freshness,theme,signal,activeActivity}) {
+        statusElement.textContent=status; eyebrowElement.textContent=eyebrow; descriptionElement.textContent=description; recordedAtElement.textContent=recordedAt; freshnessElement.textContent=freshness; freshnessLabelElement.textContent=signal;
+        if(previousActivity && activeActivity && previousActivity!==activeActivity) bezelElement.style.setProperty("--previous-angle",getComputedStyle(instrumentElement).getPropertyValue("--angle"));
+        instrumentElement.dataset.status=theme; activityElements.forEach((element)=>element.classList.toggle("active",element.dataset.activity===activeActivity));
+        if(previousActivity && activeActivity && previousActivity!==activeActivity) { bezelElement.classList.remove("state-changed"); void bezelElement.offsetWidth; bezelElement.classList.add("state-changed"); }
+        previousActivity=activeActivity; document.title=`Now - ${status}`;
       }
-
-      function timeAgo(timestamp) {
-        const minutes = Math.max(0, Math.floor((Date.now() - new Date(timestamp).getTime()) / 60_000));
-        if (minutes < 1) return "Just now";
-        if (minutes === 1) return "1 minute ago";
-        return `${minutes} minutes ago`;
-      }
-
-      function setState({ status, eyebrow, description, recordedAt, freshness, theme, signal, activeActivity }) {
-        statusElement.textContent = status;
-        eyebrowElement.textContent = eyebrow;
-        descriptionElement.textContent = description;
-        recordedAtElement.textContent = recordedAt;
-        freshnessElement.textContent = freshness;
-        freshnessLabelElement.textContent = signal;
-        instrumentElement.dataset.status = theme;
-        bezelElement.dataset.status = theme;
-        activityElements.forEach((element) => element.classList.toggle("active", element.dataset.activity === activeActivity));
-
-        if (previousActivity && activeActivity && previousActivity !== activeActivity) {
-          bezelElement.classList.remove("state-changed");
-          void bezelElement.offsetWidth;
-          bezelElement.classList.add("state-changed");
-        }
-        previousActivity = activeActivity;
-        document.title = `Now - ${status}`;
-      }
-
       async function refreshStatus() {
         try {
-          const response = await fetch(STATUS_URL, { cache: "no-store" });
-          if (response.status === 404) {
-            setState({ status: "Not set", eyebrow: "Current activity", description: "No Galaxy Watch activity has been recorded yet.", recordedAt: "-", freshness: "Waiting", theme: "unset", signal: "Waiting", activeActivity: null });
-            return;
-          }
-          if (!response.ok) throw new Error(`Status request failed: ${response.status}`);
-
-          const { status, timestamp } = await response.json();
-          const age = Date.now() - new Date(timestamp).getTime();
-          const isStale = !Number.isFinite(age) || age > STALE_AFTER_MS;
-          const info = statusInfo[status] || { label: "Unknown" };
-
-          setState({
-            status: info.label,
-            eyebrow: isStale ? "Last known activity" : "Current activity",
-            description: isStale ? "No watch update arrived in the last 15 minutes." : "The watch reported this activity state.",
-            recordedAt: formatTimestamp(timestamp),
-            freshness: isStale ? `${timeAgo(timestamp)} / stale` : timeAgo(timestamp),
-            theme: isStale ? "stale" : status,
-            signal: isStale ? "Stale" : "Fresh",
-            activeActivity: status,
-          });
-        } catch {
-          setState({ status: "Unavailable", eyebrow: "Status service", description: "The current activity could not be read. Retrying automatically.", recordedAt: "-", freshness: "Offline", theme: "error", signal: "Offline", activeActivity: null });
-        }
+          const response=await fetch(STATUS_URL,{cache:"no-store"});
+          if(response.status===404) { setState({status:"Not set",eyebrow:"Current activity",description:"No Galaxy Watch activity has been recorded yet.",recordedAt:"-",freshness:"Waiting",theme:"unset",signal:"Waiting",activeActivity:null}); return; }
+          if(!response.ok) throw new Error(`Status request failed: ${response.status}`);
+          const {status,timestamp}=await response.json(); const age=Date.now()-new Date(timestamp).getTime(); const isStale=!Number.isFinite(age)||age>STALE_AFTER_MS; const info=statusInfo[status]||{label:"Unknown"};
+          setState({status:info.label,eyebrow:isStale?"Last known activity":"Current activity",description:isStale?"No watch update arrived in the last 15 minutes.":"The watch reported this activity state.",recordedAt:formatTimestamp(timestamp),freshness:isStale?`${timeAgo(timestamp)} / stale`:timeAgo(timestamp),theme:isStale?"stale":status,signal:isStale?"Stale":"Fresh",activeActivity:status});
+        } catch { setState({status:"Unavailable",eyebrow:"Status service",description:"The current activity could not be read. Retrying automatically.",recordedAt:"-",freshness:"Offline",theme:"error",signal:"Offline",activeActivity:null}); }
       }
-
-      refreshStatus();
-      window.setInterval(refreshStatus, REFRESH_INTERVAL_MS);
+      refreshStatus(); window.setInterval(refreshStatus,REFRESH_INTERVAL_MS);
     </script>
   </body>
 </html>
