@@ -1,0 +1,67 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="theme-color" content="#101114" />
+    <meta name="description" content="A live personal status page." />
+    <title>Now — Personal status</title>
+    <style>
+      :root { color-scheme: dark; font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif; background: #101114; color: #f5f7fb; }
+      * { box-sizing: border-box; }
+      body { min-height: 100vh; margin: 0; display: grid; place-items: center; padding: 24px; background: radial-gradient(circle at 15% 10%, rgba(83, 103, 255, .14), transparent 35rem), radial-gradient(circle at 90% 90%, rgba(169, 96, 255, .11), transparent 32rem), #101114; }
+      main { width: min(100%, 640px); }
+      .brand { display: flex; align-items: center; gap: 10px; margin: 0 0 16px 4px; color: #aeb5c6; font-size: .94rem; font-weight: 700; letter-spacing: .04em; text-transform: uppercase; }
+      .brand-mark { width: 10px; height: 10px; border-radius: 50%; background: #7c89ff; box-shadow: 0 0 18px #7c89ff; }
+      .card { overflow: hidden; border: 1px solid #282c35; border-radius: 20px; background: rgba(24, 26, 32, .9); box-shadow: 0 24px 70px rgba(0, 0, 0, .3); }
+      .state { display: grid; min-height: 304px; padding: clamp(32px, 8vw, 60px); align-content: center; gap: 14px; }
+      .eyebrow { margin: 0; color: #aeb5c6; font-size: 1rem; }
+      h1 { margin: 0; font-size: clamp(3rem, 12vw, 5.4rem); line-height: .96; letter-spacing: -.065em; }
+      .description { margin: 4px 0 0; color: #c4cad6; font-size: 1.05rem; }
+      .meta { display: flex; align-items: center; gap: 9px; margin-top: 20px; color: #9ea6b8; font-size: .9rem; }
+      .dot { width: 8px; height: 8px; border-radius: 50%; background: currentColor; box-shadow: 0 0 12px currentColor; }
+      .status-gym { color: #54d98d; } .status-work { color: #70a7ff; } .status-study { color: #c28dff; } .status-sleep { color: #a7afbe; } .status-stale, .status-error, .status-unset { color: #f1be63; }
+      footer { border-top: 1px solid #282c35; padding: 18px clamp(24px, 6vw, 40px); color: #81899a; font-size: .85rem; } footer strong { color: #c4cad6; font-weight: 600; }
+    </style>
+  </head>
+  <body>
+    <main>
+      <div class="brand"><span class="brand-mark"></span> Now</div>
+      <section class="card" aria-live="polite">
+        <div class="state">
+          <p class="eyebrow" id="eyebrow">Checking in</p>
+          <h1 id="status" class="status-unset">Loading</h1>
+          <p class="description" id="description">Getting the latest update.</p>
+          <div class="meta status-unset" id="meta"><span class="dot"></span><span>Connecting to status service</span></div>
+        </div>
+        <footer><strong>Live status</strong> · updates every 30 seconds</footer>
+      </section>
+    </main>
+    <script>
+      const STATUS_URL = "https://personal-status-worker.healthz.workers.dev/status";
+      const REFRESH_INTERVAL_MS = 30_000;
+      const STALE_AFTER_MS = 15 * 60_000;
+      const statusElement = document.querySelector("#status");
+      const eyebrowElement = document.querySelector("#eyebrow");
+      const descriptionElement = document.querySelector("#description");
+      const metaElement = document.querySelector("#meta");
+      const statusLabels = { gym: "Gym", work: "Work", study: "Study", sleep: "Sleep" };
+      function setState({ eyebrow, status, description, meta, stateClass }) { eyebrowElement.textContent = eyebrow; statusElement.textContent = status; descriptionElement.textContent = description; metaElement.lastElementChild.textContent = meta; statusElement.className = stateClass; metaElement.className = `meta ${stateClass}`; }
+      function timeAgo(timestamp) { const minutes = Math.max(0, Math.floor((Date.now() - new Date(timestamp).getTime()) / 60_000)); if (minutes < 1) return "updated just now"; if (minutes === 1) return "updated 1 minute ago"; return `updated ${minutes} minutes ago`; }
+      async function refreshStatus() {
+        try {
+          const response = await fetch(STATUS_URL, { cache: "no-store" });
+          if (response.status === 404) { setState({ eyebrow: "Currently", status: "Not set", description: "No status has been shared yet.", meta: "Waiting for the first update", stateClass: "status-unset" }); return; }
+          if (!response.ok) throw new Error(`Status request failed: ${response.status}`);
+          const { status, timestamp } = await response.json();
+          const age = Date.now() - new Date(timestamp).getTime();
+          const isStale = !Number.isFinite(age) || age > STALE_AFTER_MS;
+          const label = statusLabels[status] || "Unknown";
+          setState({ eyebrow: isStale ? "Last known status" : "Currently", status: label, description: isStale ? "This update may no longer be current." : "Shared directly from my watch.", meta: `${timeAgo(timestamp)}${isStale ? " · status may be stale" : ""}`, stateClass: isStale ? "status-stale" : `status-${status}` });
+        } catch { setState({ eyebrow: "Status service", status: "Unavailable", description: "The latest status could not be reached.", meta: "Trying again in 30 seconds", stateClass: "status-error" }); }
+      }
+      refreshStatus();
+      window.setInterval(refreshStatus, REFRESH_INTERVAL_MS);
+    </script>
+  </body>
+</html>

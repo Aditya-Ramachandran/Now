@@ -17,9 +17,10 @@ interface StatusRecord {
 function corsHeaders(request: Request, env: Env): Headers {
   const headers = new Headers({ Vary: "Origin" });
   const origin = request.headers.get("Origin");
+  const isAllowedOrigin = origin && (env.FRONTEND_ORIGIN === "*" || origin === env.FRONTEND_ORIGIN);
 
-  if (origin === env.FRONTEND_ORIGIN) {
-    headers.set("Access-Control-Allow-Origin", origin);
+  if (isAllowedOrigin) {
+    headers.set("Access-Control-Allow-Origin", env.FRONTEND_ORIGIN === "*" ? "*" : origin);
     headers.set("Access-Control-Allow-Methods", "GET, POST, OPTIONS");
     headers.set("Access-Control-Allow-Headers", "Content-Type, X-API-Key");
     headers.set("Access-Control-Max-Age", "86400");
